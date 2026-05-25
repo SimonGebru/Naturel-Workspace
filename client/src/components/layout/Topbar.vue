@@ -15,10 +15,11 @@
       </div>
 
       <input
-        type="text"
-        placeholder="Search..."
-        class="w-72 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm outline-none focus:border-violet-500"
-      />
+  v-model="searchQuery"
+  type="text"
+  placeholder="Search nodes..."
+  class="w-72 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm outline-none focus:border-violet-500"
+/>
 
       <div class="flex gap-2">
 
@@ -65,6 +66,7 @@ const graphStore = useGraphStore();
 
 const {
   selectedFilter,
+  searchQuery,
   nodeCount,
   connectionCount
 } = storeToRefs(graphStore);

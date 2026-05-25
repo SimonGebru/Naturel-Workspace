@@ -7,10 +7,11 @@ export const getConnections = async () => {
 };
 
 export const createConnection = async (connectionData: any) => {
-  const response = await api.post(
-    "/connections",
-    connectionData
-  );
+  const response = await api.post("/connections", connectionData);
 
   return response.data.connection;
+};
+
+export const deleteConnection = async (connectionId: string) => {
+  await api.delete(`/connections/${connectionId}`);
 };
