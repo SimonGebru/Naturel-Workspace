@@ -1,9 +1,15 @@
 import api from "./api";
 
-export const getNodes = async () => {
-  const response = await api.get("/nodes");
+export const getNodes = async (
+  workspaceId:string
+) => {
 
-  return response.data.nodes;
+  const response =
+    await api.get(
+      `/nodes?workspaceId=${workspaceId}`
+    );
+
+  return response.data;
 };
 
 export const createNode = async (nodeData: any) => {

@@ -1,9 +1,15 @@
 import api from "./api";
 
-export const getConnections = async () => {
-  const response = await api.get("/connections");
+export const getConnections = async (
+  workspaceId:string
+) => {
 
-  return response.data.connections;
+  const response =
+    await api.get(
+      `/connections?workspaceId=${workspaceId}`
+    );
+
+  return response.data;
 };
 
 export const createConnection = async (connectionData: any) => {

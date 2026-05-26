@@ -15,7 +15,11 @@ import {
   deleteConnection,
 } from "../services/connectionService";
 
+import { useWorkspaceStore } from "./workspaceStore";
+
 export const useGraphStore = defineStore("graph", () => {
+  const workspaceStore = useWorkspaceStore();
+
   const nodes = ref<any[]>([]);
   const connections = ref<any[]>([]);
   const selectedNodeId = ref<string | null>(null);
@@ -23,6 +27,10 @@ export const useGraphStore = defineStore("graph", () => {
   const loading = ref(false);
   const selectedFilter = ref("all");
   const searchQuery = ref("");
+
+  const activeWorkspaceId = computed(() => {
+    return workspaceStore.selectedWorkspace?._id || null;
+  });
 
   const filteredNodes = computed(() => {
     return nodes.value.filter((node) => {
@@ -55,19 +63,32 @@ export const useGraphStore = defineStore("graph", () => {
     );
   });
 
+  const resetGraphState = () => {
+    nodes.value = [];
+    connections.value = [];
+    selectedNodeId.value = null;
+    selectedConnectionId.value = null;
+  };
+
   const fetchGraph = async () => {
     try {
       loading.value = true;
 
+      if (!activeWorkspaceId.value) {
+        resetGraphState();
+        return;
+      }
+
       const [nodesResponse, connectionsResponse] = await Promise.all([
-        getNodes(),
-        getConnections(),
+        getNodes(activeWorkspaceId.value),
+        getConnections(activeWorkspaceId.value),
       ]);
 
-      nodes.value = nodesResponse;
-      connections.value = connectionsResponse;
+      nodes.value = nodesResponse.nodes;
+      connections.value = connectionsResponse.connections;
     } catch (error) {
       console.error(error);
+      toast.error("Failed to load graph");
     } finally {
       loading.value = false;
     }
@@ -75,7 +96,15 @@ export const useGraphStore = defineStore("graph", () => {
 
   const createNewNode = async (nodeData: any) => {
     try {
-      const newNode = await createNode(nodeData);
+      if (!activeWorkspaceId.value) {
+        toast.error("No workspace selected");
+        return;
+      }
+
+      const newNode = await createNode({
+        ...nodeData,
+        workspaceId: activeWorkspaceId.value,
+      });
 
       nodes.value.unshift(newNode);
 
@@ -95,7 +124,13 @@ export const useGraphStore = defineStore("graph", () => {
     label = "related"
   ) => {
     try {
+      if (!activeWorkspaceId.value) {
+        toast.error("No workspace selected");
+        return;
+      }
+
       const newConnection = await createConnection({
+        workspaceId: activeWorkspaceId.value,
         sourceNode,
         targetNode,
         type,
@@ -217,6 +252,7 @@ export const useGraphStore = defineStore("graph", () => {
       }
     } catch (error) {
       console.error(error);
+      toast.error("Failed to save position");
     }
   };
 
@@ -243,7 +279,9 @@ export const useGraphStore = defineStore("graph", () => {
     nodeCount,
     connectionCount,
     loading,
+    activeWorkspaceId,
     fetchGraph,
+    resetGraphState,
     createNewNode,
     createNewConnection,
     updateExistingNode,

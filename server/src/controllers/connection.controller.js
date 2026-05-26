@@ -28,11 +28,15 @@ const validateUserNodes = async (userId, sourceNodeId, targetNodeId) => {
 };
 
 export const getConnections = asyncHandler(async (req, res) => {
-  const workspace = await getOrCreateWorkspace(req.user._id);
+  const { workspaceId } = req.query;
+
+  if (!workspaceId) {
+    throw new ApiError(400, "workspaceId is required");
+  }
 
   const connections = await Connection.find({
     user: req.user._id,
-    workspace: workspace._id,
+    workspace: workspaceId,
   })
     .populate("sourceNode", "title type")
     .populate("targetNode", "title type")
@@ -65,7 +69,20 @@ export const createConnection = asyncHandler(async (req, res) => {
     );
   }
 
-  const workspace = await getOrCreateWorkspace(req.user._id);
+  const { workspaceId } = req.body;
+
+if (!workspaceId) {
+  throw new ApiError(400, "workspaceId is required");
+}
+
+const workspace = await Workspace.findOne({
+  _id: workspaceId,
+  user: req.user._id,
+});
+
+if (!workspace) {
+  throw new ApiError(404, "Workspace not found");
+}
 
   const existingConnection = await Connection.findOne({
     user: req.user._id,
@@ -80,7 +97,7 @@ export const createConnection = asyncHandler(async (req, res) => {
 
   const connection = await Connection.create({
     user: req.user._id,
-    workspace: workspace._id,
+    workspace: workspaceId,
     sourceNode,
     targetNode,
     label,

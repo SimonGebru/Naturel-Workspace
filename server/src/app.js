@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/workspace", workspaceRoutes);
+app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/nodes", nodeRoutes);
 app.use("/api/connections", connectionRoutes);
 

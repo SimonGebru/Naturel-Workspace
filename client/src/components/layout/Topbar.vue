@@ -43,25 +43,41 @@
 
     <div class="flex items-center gap-4">
 
-      <span class="text-sm text-emerald-400">
-        Saved
-      </span>
+  
 
-      <button
-        class="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium hover:bg-violet-500 transition"
-        @click="$emit('open-create-node')"
-      >
-        Create Node
-      </button>
+  <button
+    class="rounded-xl bg-slate-800 px-4 py-2 text-sm hover:bg-slate-700 transition"
+    @click="handleLogout"
+  >
+    Logout
+  </button>
 
-    </div>
+  <button
+    class="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium hover:bg-violet-500 transition"
+    @click="$emit('open-create-node')"
+  >
+    Create Node
+  </button>
+
+</div>
   </header>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { useGraphStore } from "../../stores/graphStore";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/authStore";
 
+const router = useRouter();
+
+const authStore = useAuthStore();
+
+const handleLogout = () => {
+  authStore.logout();
+
+  router.push("/login");
+};
 const graphStore = useGraphStore();
 
 const {

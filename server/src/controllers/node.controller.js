@@ -19,11 +19,15 @@ const getOrCreateWorkspace = async (userId) => {
 };
 
 export const getNodes = asyncHandler(async (req, res) => {
-  const workspace = await getOrCreateWorkspace(req.user._id);
+  const { workspaceId } = req.query;
+
+  if (!workspaceId) {
+    throw new ApiError(400, "workspaceId is required");
+  }
 
   const nodes = await Node.find({
     user: req.user._id,
-    workspace: workspace._id,
+    workspace: workspaceId,
   }).sort({ createdAt: -1 });
 
   res.status(200).json({ nodes });
@@ -44,11 +48,24 @@ export const createNode = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Title and type are required");
   }
 
-  const workspace = await getOrCreateWorkspace(req.user._id);
+  const { workspaceId } = req.body;
+
+if (!workspaceId) {
+  throw new ApiError(400, "workspaceId is required");
+}
+
+const workspace = await Workspace.findOne({
+  _id: workspaceId,
+  user: req.user._id,
+});
+
+if (!workspace) {
+  throw new ApiError(404, "Workspace not found");
+}
 
   const node = await Node.create({
     user: req.user._id,
-    workspace: workspace._id,
+   workspace: workspaceId,
     title,
     type,
     description,

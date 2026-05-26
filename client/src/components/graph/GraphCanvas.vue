@@ -29,8 +29,8 @@
 
     <VueFlow
       v-else
-      v-model:nodes="flowNodes"
-      v-model:edges="flowEdges"
+      :nodes="flowNodes"
+        :edges="flowEdges"
       :node-types="nodeTypes"
       fit-view-on-init
       class="h-full w-full"
@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, markRaw, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 
 import { VueFlow } from "@vue-flow/core";
@@ -83,7 +83,7 @@ const pendingConnection = ref<null | {
 }>(null);
 
 const nodeTypes = {
-  neural: NeuralNode,
+  neural: markRaw(NeuralNode),
 };
 
 const {
@@ -192,7 +192,7 @@ const flowEdges = computed(() =>
       source: sourceId,
       target: targetId,
       label: connection.label || connection.type,
-      type: "bezier",
+      type: "default",
       animated: isRelatedToSelected || !selectedNodeId.value,
       style: {
         stroke: isRelatedToSelected ? "#22d3ee" : "#475569",
