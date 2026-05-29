@@ -1,15 +1,15 @@
 <template>
-  <main class="h-screen bg-slate-950 text-white flex">
-    <Sidebar />
+  <main class="h-screen overflow-hidden bg-slate-950 text-white">
+    <div class="flex h-full bg-[radial-gradient(circle_at_top_left,rgba(124,58,237,0.14),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(6,182,212,0.10),transparent_30%)]">
+      <Sidebar />
 
-    <div class="flex flex-col flex-1">
-      <Topbar @open-create-node="showCreateNodeModal = true" />
+      <section class="flex min-w-0 flex-1 flex-col">
+        <Topbar @open-create-node="showCreateNodeModal = true" />
 
-      <div class="flex flex-1 overflow-hidden">
-        <GraphCanvas />
-
-        <NodeDetailsPanel />
-      </div>
+        <div class="min-h-0 flex-1 overflow-hidden">
+          <RouterView />
+        </div>
+      </section>
     </div>
 
     <CreateNodeModal
@@ -24,8 +24,6 @@ import { onMounted, onUnmounted, ref } from "vue";
 
 import Sidebar from "./Sidebar.vue";
 import Topbar from "./Topbar.vue";
-import GraphCanvas from "../graph/GraphCanvas.vue";
-import NodeDetailsPanel from "../graph/NodeDetailsPanel.vue";
 import CreateNodeModal from "../graph/CreateNodeModal.vue";
 
 import { useGraphStore } from "../../stores/graphStore";

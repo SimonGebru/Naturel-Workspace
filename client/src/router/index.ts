@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import LoginPage from "../pages/LoginPage.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
+
+import AppLayout from "../components/layout/AppLayout.vue";
 import WorkspacePage from "../pages/WorkspacePage.vue";
 import NodesPage from "../pages/NodesPage.vue";
 import SettingsPage from "../pages/SettingsPage.vue";
@@ -24,19 +26,23 @@ const router = createRouter({
       meta: { guestOnly: true },
     },
     {
-      path: "/workspace",
-      component: WorkspacePage,
+      path: "/",
+      component: AppLayout,
       meta: { requiresAuth: true },
-    },
-    {
-      path: "/nodes",
-      component: NodesPage,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: "/settings",
-      component: SettingsPage,
-      meta: { requiresAuth: true },
+      children: [
+        {
+          path: "workspace",
+          component: WorkspacePage,
+        },
+        {
+          path: "nodes",
+          component: NodesPage,
+        },
+        {
+          path: "settings",
+          component: SettingsPage,
+        },
+      ],
     },
   ],
 });
